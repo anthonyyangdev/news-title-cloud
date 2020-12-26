@@ -2,8 +2,15 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import {WordBubble, WordBubbleElement} from "./component/WordBubble";
 import {FilterTool} from "./component/FilterTool";
-import {Category, getNews, NewsApiParams} from "./news/getNews";
+import {Category, getNews, NewsApiParams, NewsEntry} from "./news/getNews";
 const keyword_extractor = require('keyword-extractor');
+
+
+type WordCloudElementReference = Record<string, NewsEntry[]>
+type WordCloudState = {
+  words: WordBubbleElement[];
+  references: WordCloudElementReference;
+};
 
 function extractKeywords(phrase: string): string[] {
   return keyword_extractor.extract(phrase, {
@@ -14,13 +21,25 @@ function extractKeywords(phrase: string): string[] {
   })
 }
 
-function countWordFrequency(words: string[]): Record<string, number> {
+function countWordFrequency(entries: (NewsEntry & {keywords: string[]})[]):
+  Omit<WordCloudState, 'words'> & {counter: Record<string, number>}
+{
   const counter: Record<string, number> = {};
-  for (const word of words) {
-    if (word in counter) counter[word]++;
-    else counter[word] = 1;
+  const references: WordCloudElementReference = {};
+  for (const entry of entries) {
+    const {keywords} = entry;
+    for (const word of keywords) {
+      if (word in counter) {
+        counter[word]++;
+        references[word].push(entry);
+      }
+      else {
+        counter[word] = 1;
+        references[word] = [entry];
+      }
+    }
   }
-  return counter;
+  return {counter, references};
 }
 
 function sortWordCounter(counter: Record<string, number>): WordBubbleElement[] {
@@ -31,39 +50,27 @@ function sortWordCounter(counter: Record<string, number>): WordBubbleElement[] {
     });
 }
 
-const isProduction = true;
-function loadWordBubble(setWords: (words: WordBubbleElement[]) => void, params?: NewsApiParams) {
-  if (isProduction) {
-    getNews(params).then(x => {
-      const keywords: string[] = x.map(t => extractKeywords(t.title)).flat(1);
-      const counter = countWordFrequency(keywords);
-      setWords(sortWordCounter(counter));
-    }).catch(e => {
-      console.log("News cannot be retrieved, Error: " + e);
-    });
-  } else {
-    setWords([
-      {
-        text: 'slams',
-        value: 39
-      }, {
-        text: 'Biden',
-        value: 39,
-      }, {
-        text: 'Trump',
-        value: 39
-      }
-    ])
-  }
+function loadWordBubble(
+  setCloudState: (cloudState: WordCloudState) => void,
+  params?: NewsApiParams) {
+  getNews(params).then(x => {
+    const keywords: (NewsEntry & {keywords: string[]})[] = x.map(entry => {
+      return {...entry, keywords: extractKeywords(entry.title)}
+    }).flat(1);
+    const {counter, references} = countWordFrequency(keywords);
+    setCloudState({words: sortWordCounter(counter), references});
+  }).catch(e => {
+    console.log("News cannot be retrieved, Error: " + e);
+  });
 }
 
 function App() {
-  const [words, setWords] = useState<WordBubbleElement[]>([]);
+  const [cloudState, setCloudState] = useState<WordCloudState>({words: [], references: {}});
   const [category, setCategory] = useState<Category | undefined>(undefined);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [pageSize, setPageSize] = useState<number>(20);
 
-  useEffect(() => loadWordBubble(setWords, {category, q: query, pageSize}),
+  useEffect(() => loadWordBubble(setCloudState, {category, q: query, pageSize}),
     [category, pageSize, query]);
 
   return (
@@ -77,7 +84,14 @@ function App() {
         <div style={{
           marginTop: '1rem'
         }}>
-          <WordBubble words={words}/>
+          <WordBubble
+            words={cloudState.words}
+            onWordSelect={word => {
+              const sources = cloudState.references[word];
+              for (const s of sources)
+                console.log(JSON.stringify(s));
+            }}
+          />
         </div>
       </header>
     </div>

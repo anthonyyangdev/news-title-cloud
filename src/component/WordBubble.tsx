@@ -9,13 +9,18 @@ const options: Partial<Options> = {
   enableTooltip: false,
   fontSizes: [20, 100]
 };
-const callbacks: Callbacks = {
-  onWordClick: console.log,
-  onWordMouseOver: console.log,
-  getWordTooltip: (word: WordBubbleElement) => `${word.text}`,
-}
 
-export function WordBubble({words}: {words: WordBubbleElement[]}) {
+export function WordBubble({words, onWordSelect}: {
+  words: WordBubbleElement[];
+  onWordSelect: (word: string) => void;
+}) {
+  const callbacks: Callbacks = {
+    onWordClick: word => {
+      return onWordSelect(word.text);
+    },
+    onWordMouseOver: console.log,
+    getWordTooltip: (word: WordBubbleElement) => `${word.text}`,
+  }
   return (
     <ReactWordcloud
       words={words}

@@ -9,8 +9,17 @@ export type NewsApiParams = {
   q?: string;
 };
 
-type NewsEntry = {
+export type NewsEntry = {
   title: string;
+  source: {
+    id: string | null,
+    name: string;
+  };
+  url: string;
+  publishedAt: string;
+  author: string;
+  description: string;
+  content: string;
 }
 
 export async function getNews(params?: NewsApiParams): Promise<NewsEntry[]> {
@@ -29,9 +38,13 @@ export async function getNews(params?: NewsApiParams): Promise<NewsEntry[]> {
   const response = await fetch(req);
   const json = await response.json();
   if (json.status === "ok") {
-    return json.articles.map((x: Record<string, string>) => {
+    return json.articles.map((x: Record<string, unknown>) => {
       return {
-        title: x.title
+        title: x.title,
+        source: {
+          id: (x.source as {id: string | null}).id,
+          name: (x.source as {name: string}).name
+        }
       };
     });
   } else {
