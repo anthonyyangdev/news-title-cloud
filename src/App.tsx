@@ -31,7 +31,7 @@ function sortWordCounter(counter: Record<string, number>): WordBubbleElement[] {
     });
 }
 
-const isProduction = false;
+const isProduction = true;
 function loadWordBubble(setWords: (words: WordBubbleElement[]) => void, params?: NewsApiParams) {
   if (isProduction) {
     getNews(params).then(x => {
@@ -74,7 +74,9 @@ function App() {
           onPageCountChange={count => setPageSize(count)}
           onQueryChange={q => setQuery(q)}
         />
-        <div>
+        <div style={{
+          marginTop: '1rem'
+        }}>
           <WordBubble words={words}/>
         </div>
       </header>

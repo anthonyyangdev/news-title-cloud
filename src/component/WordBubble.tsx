@@ -5,10 +5,11 @@ import React from "react";
 export type WordBubbleElement = { text: string; value: number; };
 const options: Partial<Options> = {
   rotations: 2,
-  rotationAngles: [-90, 0] as [number, number]
+  rotationAngles: [0, 0],
+  enableTooltip: false,
+  fontSizes: [20, 100]
 };
 const callbacks: Callbacks = {
-  // getWordColor: (word: WordBubbleElement) => word.value > 50 ? "blue" : "red",
   onWordClick: console.log,
   onWordMouseOver: console.log,
   getWordTooltip: (word: WordBubbleElement) => `${word.text}`,
@@ -18,7 +19,7 @@ export function WordBubble({words}: {words: WordBubbleElement[]}) {
   return (
     <ReactWordcloud
       words={words}
-      size={[600, 400]}
+      size={[800, 600]}
       options={options}
       callbacks={callbacks}
     />

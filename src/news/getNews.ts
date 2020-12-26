@@ -20,7 +20,8 @@ export async function getNews(params?: NewsApiParams): Promise<NewsEntry[]> {
     const pageSizeParam = `pageSize=${Math.min(pageSize ?? Infinity, 100)}`;
     const categoryParam = category !== undefined ? `category=${category}` : '';
     const qParam = q !== undefined ?`q=${q}` : '';
-    url = `http://newsapi.org/v2/top-headlines?apiKey=${apiKey}&country=us&${pageSizeParam}&${categoryParam}&${qParam}`;
+    const headerParam = [pageSizeParam, categoryParam, qParam].filter(x => x.length > 0).join("&")
+    url = `http://newsapi.org/v2/top-headlines?apiKey=${apiKey}&country=us&${headerParam}`;
   } else {
     url = `http://newsapi.org/v2/top-headlines?apiKey=${apiKey}&country=us`;
   }
