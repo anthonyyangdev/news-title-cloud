@@ -1,9 +1,11 @@
 
 const apiKey = "1b071f2ba09342579e83cc9bfc08e82d";
 
-type NewsApiParams = {
+export type Category = 'business' | 'entertainment' | 'general' | 'health' | 'science' | 'sports' | 'technology';
+
+export type NewsApiParams = {
   pageSize?: number;
-  category?: 'business' | 'entertainment' | 'general' | 'health' | 'science' | 'sports' | 'technology';
+  category?: Category;
   q?: string;
 };
 
