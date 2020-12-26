@@ -3,6 +3,7 @@ import './App.css';
 import {WordBubble, WordBubbleElement} from "./component/WordBubble";
 import {FilterTool} from "./component/FilterTool";
 import {Category, getNews, NewsApiParams, NewsEntry} from "./news/getNews";
+import {WordPanel} from "./component/WordPanel";
 const keyword_extractor = require('keyword-extractor');
 
 
@@ -69,9 +70,14 @@ function App() {
   const [category, setCategory] = useState<Category | undefined>(undefined);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [pageSize, setPageSize] = useState<number>(20);
+  const [wordPanelProperties, setWordPanelProperties] = useState<{
+    isVisible: boolean,
+    content: NewsEntry[]
+  }>({isVisible: false, content: []});
 
-  useEffect(() => loadWordBubble(setCloudState, {category, q: query, pageSize}),
-    [category, pageSize, query]);
+  useEffect(() => {
+    loadWordBubble(setCloudState, {category, q: query, pageSize});
+  },[category, pageSize, query]);
 
   return (
     <div className="App">
@@ -84,14 +90,27 @@ function App() {
         <div style={{
           marginTop: '1rem'
         }}>
-          <WordBubble
-            words={cloudState.words}
-            onWordSelect={word => {
-              const sources = cloudState.references[word];
-              for (const s of sources)
-                console.log(JSON.stringify(s));
-            }}
-          />
+          <div style={{float: "left", width: "70%"}}>
+            <WordBubble
+              words={cloudState.words}
+              onWordSelect={word => {
+                setWordPanelProperties({
+                  isVisible: true,
+                  content: cloudState.references[word]
+                })
+              }}
+            />
+          </div>
+          <div>
+            <WordPanel
+              isVisible={wordPanelProperties.isVisible}
+              content={wordPanelProperties.content}
+              onClose={() => setWordPanelProperties({
+                isVisible: false,
+                content: []
+              })}
+            />
+          </div>
         </div>
       </header>
     </div>

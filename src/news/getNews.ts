@@ -41,10 +41,12 @@ export async function getNews(params?: NewsApiParams): Promise<NewsEntry[]> {
     return json.articles.map((x: Record<string, unknown>) => {
       return {
         title: x.title,
-        source: {
-          id: (x.source as {id: string | null}).id,
-          name: (x.source as {name: string}).name
-        }
+        source: x.source,
+        url: x.url,
+        publishedAt: x.publishedAt,
+        author: x.author != null ? x.author : 'Unknown',
+        description: x.description,
+        content: x.content
       };
     });
   } else {

@@ -7,7 +7,9 @@ const options: Partial<Options> = {
   rotations: 2,
   rotationAngles: [0, 0],
   enableTooltip: false,
-  fontSizes: [20, 100]
+  fontSizes: [20, 100],
+  transitionDuration: 0,
+  deterministic: true
 };
 
 export function WordBubble({words, onWordSelect}: {
