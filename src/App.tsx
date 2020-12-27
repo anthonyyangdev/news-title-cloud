@@ -71,6 +71,10 @@ function App() {
   const [category, setCategory] = useState<Category | undefined>(undefined);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [pageSize, setPageSize] = useState<number>(20);
+  const [windowSize, setWindowSize] = useState<{width: number; height: number}>({
+    width: window.innerWidth,
+    height: window.innerHeight
+  });
   const [wordPanelProperties, setWordPanelProperties] = useState<{
     isVisible: boolean;
     content: NewsEntry[];
@@ -80,10 +84,21 @@ function App() {
   useEffect(() => {
     loadWordBubble(setCloudState, {category, q: query, pageSize});
   },[category, pageSize, query]);
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    });
+  }, []);
 
   return (
     <div className="App">
-      <div className="App-header">
+      <header className="App-header">
+        News Cloud
+      </header>
+      <div className="App-body">
         <FilterTool
           onCategoryChange={category => setCategory(category !== 'any' ? category : undefined)}
           onPageCountChange={count => setPageSize(count)}
@@ -92,6 +107,7 @@ function App() {
         <div style={{marginTop: '1rem'}}>
           <WordBubble
             words={cloudState.words}
+            windowSize={windowSize}
             onWordSelect={word => {
               setWordPanelProperties({
                 isVisible: true,
@@ -104,14 +120,14 @@ function App() {
             isVisible={wordPanelProperties.isVisible}
             content={wordPanelProperties.content}
             keyword={wordPanelProperties.keyword}
-            onClose={() => setWordPanelProperties({
-              isVisible: false,
-              keyword: "",
-              content: []
-            })}
+            onClose={() => setWordPanelProperties({isVisible: false, keyword: "", content: []})}
           />
         </div>
       </div>
+      <footer className="App-footer">
+        <p>By Anthony Yang <a href="https://github.com/anthonyyangdev" target="_blank" rel="noreferrer">@anthonyyangdev</a></p>
+        <p><a href="https://google.com" target="_blank" rel="noreferrer">Github Repo</a></p>
+      </footer>
     </div>
   );
 }

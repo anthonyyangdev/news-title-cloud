@@ -14,14 +14,28 @@
 }
 
 .App-header {
-  background-color: #282c34;
+  text-align: left;
+  font-size: 2rem;
+  padding: 1rem 2rem 1rem;
+  background-color: lightskyblue;
+  font-family: "Fira Code", sans-serif;
+}
+
+.App-body {
+  background-color: skyblue;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 1vmin);
-  color: white;
+  color: black;
+}
+
+.App-footer {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  background-color: lightskyblue;
 }
 
 .App-link {

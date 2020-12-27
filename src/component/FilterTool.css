@@ -3,3 +3,10 @@
   margin-left: 1rem;
   margin-right: 1rem;
 }
+
+@media only screen and (max-width:800px) {
+  .form-option {
+    display: block;
+    width: 100%;
+  }
+}

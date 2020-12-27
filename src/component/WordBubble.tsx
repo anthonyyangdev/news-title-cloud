@@ -8,12 +8,14 @@ const options: Partial<Options> = {
   rotationAngles: [0, 0],
   enableTooltip: false,
   fontSizes: [20, 100],
-  deterministic: true
+  deterministic: true,
+  colors: []
 };
 
-function WordBubbleComponent({words, onWordSelect}: {
+function WordBubbleComponent({words, onWordSelect, windowSize}: {
   words: WordBubbleElement[];
   onWordSelect: (word: string) => void;
+  windowSize: {width: number; height: number;};
 }) {
   const callbacks: Callbacks = {
     onWordClick: word => {
@@ -35,6 +37,10 @@ function WordBubbleComponent({words, onWordSelect}: {
   )
 }
 
-export const WordBubble = React.memo(WordBubbleComponent, (prevProp, nextProp) => {
-  return JSON.stringify(prevProp.words) === JSON.stringify(nextProp.words);
+export const WordBubble = React.memo(WordBubbleComponent,
+  (prevProp,
+   nextProp) => {
+  return (JSON.stringify(prevProp.words) === JSON.stringify(nextProp.words))
+    && (prevProp.windowSize.height === nextProp.windowSize.height)
+    && (prevProp.windowSize.width === nextProp.windowSize.width);
 });
