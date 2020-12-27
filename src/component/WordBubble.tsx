@@ -8,11 +8,10 @@ const options: Partial<Options> = {
   rotationAngles: [0, 0],
   enableTooltip: false,
   fontSizes: [20, 100],
-  transitionDuration: 0,
   deterministic: true
 };
 
-export function WordBubble({words, onWordSelect}: {
+function WordBubbleComponent({words, onWordSelect}: {
   words: WordBubbleElement[];
   onWordSelect: (word: string) => void;
 }) {
@@ -23,13 +22,19 @@ export function WordBubble({words, onWordSelect}: {
     onWordMouseOver: console.log,
     getWordTooltip: (word: WordBubbleElement) => `${word.text}`,
   }
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  const size: [number, number] = [width * 0.8, height * 0.8];
   return (
     <ReactWordcloud
       words={words}
-      size={[800, 600]}
+      size={size}
       options={options}
       callbacks={callbacks}
     />
   )
-
 }
+
+export const WordBubble = React.memo(WordBubbleComponent, (prevProp, nextProp) => {
+  return JSON.stringify(prevProp.words) === JSON.stringify(nextProp.words);
+});

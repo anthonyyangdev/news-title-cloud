@@ -90,27 +90,23 @@ function App() {
         <div style={{
           marginTop: '1rem'
         }}>
-          <div style={{float: "left", width: "70%"}}>
-            <WordBubble
-              words={cloudState.words}
-              onWordSelect={word => {
-                setWordPanelProperties({
-                  isVisible: true,
-                  content: cloudState.references[word]
-                })
-              }}
-            />
-          </div>
-          <div>
-            <WordPanel
-              isVisible={wordPanelProperties.isVisible}
-              content={wordPanelProperties.content}
-              onClose={() => setWordPanelProperties({
-                isVisible: false,
-                content: []
-              })}
-            />
-          </div>
+          <WordBubble
+            words={cloudState.words}
+            onWordSelect={word => {
+              setWordPanelProperties({
+                isVisible: true,
+                content: cloudState.references[word]
+              })
+            }}
+          />
+          <WordPanel
+            isVisible={wordPanelProperties.isVisible}
+            content={wordPanelProperties.content}
+            onClose={() => setWordPanelProperties({
+              isVisible: false,
+              content: []
+            })}
+          />
         </div>
       </header>
     </div>

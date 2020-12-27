@@ -3,15 +3,16 @@ import React, {CSSProperties} from "react";
 
 const wordPanelStyle: CSSProperties = {
   position: "fixed",
-  left: "70%",
-  width: "20%",
-  height: "500px",
-  backgroundColor: "whitesmoke",
+  height: "100%",
+  width: "60%",
+  top: 0, left: "20%", right: "20%", bottom: 0,
+  backgroundColor: "rgba(256,256,256,0.75)",
   color: "black",
   display: "none",
   textAlign: "left",
   overflow: "scroll",
-  padding: "1rem"
+  padding: "1rem",
+  zIndex: 2
 };
 
 export function WordPanel({isVisible, content, onClose}: {
@@ -22,7 +23,7 @@ export function WordPanel({isVisible, content, onClose}: {
   return (
     <div style={{
       ...wordPanelStyle,
-      display: isVisible ? "initial" : "none"
+      display: isVisible ? "block" : "none"
     }}>
       <button onClick={onClose}>Close</button>
       {content.map(entry => {
