@@ -1,11 +1,19 @@
 import React from "react";
-import {Category} from "../news/getNews";
+import {Category, categoryValues} from "../news/getNews";
 import './FilterTool.css';
 
 function generateNumericalList(start: number, end: number) {
   const items = [];
   for (let i = start; i <= end; i++) {
     items.push(<option key={i} value={i}>{i}</option>)
+  }
+  return items;
+}
+
+function generateCategoryList() {
+  const items = [];
+  for (const category of categoryValues) {
+    items.push(<option key={category} value={category}>{category}</option>);
   }
   return items;
 }
@@ -27,14 +35,7 @@ export function FilterTool({onQueryChange, onPageCountChange, onCategoryChange}:
       </label>
       <label className="form-option">Category: <select name="category" defaultValue='any'
                 onChange={event => onCategoryChange(event.target.value as Category | 'any')}>
-        <option value="any"> Any </option>
-        <option value="business">Business</option>
-        <option value="entertainment">Entertainment</option>
-        <option value="general">General</option>
-        <option value="health">Health</option>
-        <option value="science">Science</option>
-        <option value="sports">Sports</option>
-        <option value="technology">Technology</option>
+          {generateCategoryList()}
       </select></label>
     </form>
   )

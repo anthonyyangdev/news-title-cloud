@@ -1,7 +1,9 @@
 
-const apiKey = "1b071f2ba09342579e83cc9bfc08e82d";
+export type Category = 'Business' | 'Entertainment' | 'Health' | 'Politics' | 'Products' | 'ScienceAndTechnology' | 'Sports' | 'US' | 'World' | 'World_Africa' | 'World_Americas' | 'World_Asia' | 'World_Europe' | 'World_MiddleEast';
 
-export type Category = 'business' | 'entertainment' | 'general' | 'health' | 'science' | 'sports' | 'technology';
+export const categoryValues = [
+  'Business', 'Entertainment', 'Health', 'Politics', 'Products', 'ScienceAndTechnology', 'Sports', 'US', 'World', 'World_Africa', 'World_Americas', 'World_Asia', 'World_Europe', 'World_MiddleEast'
+]
 
 export type NewsApiParams = {
   pageSize?: number;
@@ -86,34 +88,44 @@ const debugNewsEntries: NewsEntry[] = [{
   "content": "After a historic day in which the headlines could hardly keep up with price action and Bitcoin set a new all-time high above $26,500, traders and analysts are now turning their attention towards what… [+2533 chars]"
 }];
 
-const isProduction = false;
+const isProduction = true;
 export async function getNews(params?: NewsApiParams): Promise<NewsEntry[]> {
   if (isProduction) {
     let url: string;
     if (params !== undefined) {
       const {pageSize, category, q} = params;
-      const pageSizeParam = `pageSize=${Math.min(pageSize ?? Infinity, 100)}`;
-      const categoryParam = category !== undefined ? `category=${category}` : '';
-      const qParam = q !== undefined ? `q=${q}` : '';
-      const headerParam = [pageSizeParam, categoryParam, qParam].filter(x => x.length > 0).join("&")
-      url = `http://newsapi.org/v2/top-headlines?apiKey=${apiKey}&country=us&${headerParam}`;
+      if (category !== undefined) {
+        url = `https://api.bing.microsoft.com/v7.0/news?category=${category}`
+      } else {
+        const countParam = `count=${Math.max(Math.min(pageSize ?? Infinity, 100), 1)}`;
+        const qParam = q !== undefined ? `q=${q}` : '';
+        const headerParam = [countParam, qParam].filter(x => x.length > 0).join("&")
+        url = `https://api.bing.microsoft.com/v7.0/news/search?${headerParam}`;
+      }
     } else {
-      url = `http://newsapi.org/v2/top-headlines?apiKey=${apiKey}&country=us`;
+      url = `https://api.bing.microsoft.com/v7.0/news/search?count=10`;
     }
-    const req = new Request(url);
+    const req = new Request(url, {
+      headers: {
+        'Ocp-Apim-Subscription-Key': "It's something"
+      }
+    });
     const response = await fetch(req);
     const json = await response.json();
-    if (json.status === "ok") {
-      return json.articles.map((x: Record<string, unknown>) => {
+    if (json != null) {
+      return json.value.map((x: Record<string, any>) => {
         return {
-          title: x.title,
-          source: x.source,
+          title: x.name,
+          source: {
+            id: x.provider[0].name,
+            name: x.provider[0].name
+          },
           url: x.url,
-          publishedAt: x.publishedAt,
-          urlToImage: x.urlToImage,
-          author: x.author != null ? x.author : 'Unknown',
+          publishedAt: x.datePublished,
+          urlToImage: x.image.thumbnail.contentUrl,
+          author: x.provider.map((p: any) => p.name).join(" "),
           description: x.description,
-          content: x.content
+          content: x.description
         };
       });
     } else {
