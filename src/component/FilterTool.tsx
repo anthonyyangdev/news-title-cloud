@@ -1,5 +1,14 @@
 import React from "react";
 import {Category} from "../news/getNews";
+import './FilterTool.css';
+
+function generateNumericalList(start: number, end: number) {
+  const items = [];
+  for (let i = start; i <= end; i++) {
+    items.push(<option key={i} value={i}>{i}</option>)
+  }
+  return items;
+}
 
 export function FilterTool({onQueryChange, onPageCountChange, onCategoryChange}: {
   onQueryChange: (q: string) => void;
@@ -8,16 +17,16 @@ export function FilterTool({onQueryChange, onPageCountChange, onCategoryChange}:
 }) {
   return (
     <form>
-      <label>Number of News Articles:
-        <input type="number" name="pageCount" min={1} max={100} defaultValue={20} onChange={event => {
-          onPageCountChange(Number.parseInt(event.target.value));
-        }}/>
+      <label className="form-option">Query: <input type="text" name="q" onChange={event => onQueryChange(event.target.value)} /></label>
+      <label className="form-option">Number of News Articles:
+        <select name="pageCount" defaultValue={'20'}
+          onChange={event => onPageCountChange(Number.parseInt(event.target.value))}>
+          {generateNumericalList(1, 100)}
+        </select>
       </label>
-      <br/>
-      <label>Query: <input type="text" name="q" onChange={event => onQueryChange(event.target.value)} /></label>
-      <br/>
-      <label>Category: <select name="category" defaultValue='any'
-                               onChange={event => onCategoryChange(event.target.value as Category | 'any')}>
+      <label className="form-option">Category:
+        <select name="category" defaultValue='any'
+                onChange={event => onCategoryChange(event.target.value as Category | 'any')}>
         <option value="any"> Any </option>
         <option value="business">Business</option>
         <option value="entertainment">Entertainment</option>

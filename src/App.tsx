@@ -22,9 +22,9 @@ function extractKeywords(phrase: string): string[] {
   })
 }
 
-function countWordFrequency(entries: (NewsEntry & {keywords: string[]})[]):
-  Omit<WordCloudState, 'words'> & {counter: Record<string, number>}
-{
+function countWordFrequency(
+  entries: (NewsEntry & {keywords: string[]})[]
+): Omit<WordCloudState, 'words'> & {counter: Record<string, number>} {
   const counter: Record<string, number> = {};
   const references: WordCloudElementReference = {};
   for (const entry of entries) {
@@ -66,14 +66,16 @@ function loadWordBubble(
 }
 
 function App() {
+  document.title = "News Cloud";
   const [cloudState, setCloudState] = useState<WordCloudState>({words: [], references: {}});
   const [category, setCategory] = useState<Category | undefined>(undefined);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [pageSize, setPageSize] = useState<number>(20);
   const [wordPanelProperties, setWordPanelProperties] = useState<{
-    isVisible: boolean,
-    content: NewsEntry[]
-  }>({isVisible: false, content: []});
+    isVisible: boolean;
+    content: NewsEntry[];
+    keyword: string;
+  }>({isVisible: false, content: [], keyword: ""});
 
   useEffect(() => {
     loadWordBubble(setCloudState, {category, q: query, pageSize});
@@ -81,20 +83,19 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <div className="App-header">
         <FilterTool
           onCategoryChange={category => setCategory(category !== 'any' ? category : undefined)}
           onPageCountChange={count => setPageSize(count)}
           onQueryChange={q => setQuery(q)}
         />
-        <div style={{
-          marginTop: '1rem'
-        }}>
+        <div style={{marginTop: '1rem'}}>
           <WordBubble
             words={cloudState.words}
             onWordSelect={word => {
               setWordPanelProperties({
                 isVisible: true,
+                keyword: word,
                 content: cloudState.references[word]
               })
             }}
@@ -102,13 +103,15 @@ function App() {
           <WordPanel
             isVisible={wordPanelProperties.isVisible}
             content={wordPanelProperties.content}
+            keyword={wordPanelProperties.keyword}
             onClose={() => setWordPanelProperties({
               isVisible: false,
+              keyword: "",
               content: []
             })}
           />
         </div>
-      </header>
+      </div>
     </div>
   );
 }
