@@ -28,7 +28,7 @@ export function FilterTool({onQueryChange, onPageCountChange, onCategoryChange}:
       <label className="form-option">Query: <input type="text" name="q"
                                                    onChange={event => onQueryChange(event.target.value)} />
       </label>
-      <label className="form-option">Number of News Articles: <select name="pageCount" defaultValue={'20'}
+      <label className="form-option">Number of News Articles: <select name="pageCount" defaultValue={20}
           onChange={event => onPageCountChange(Number.parseInt(event.target.value))}>
           {generateNumericalList(1, 100)}
         </select>

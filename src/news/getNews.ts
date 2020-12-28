@@ -2,7 +2,8 @@
 export type Category = 'Business' | 'Entertainment' | 'Health' | 'Politics' | 'Products' | 'ScienceAndTechnology' | 'Sports' | 'US' | 'World' | 'World_Africa' | 'World_Americas' | 'World_Asia' | 'World_Europe' | 'World_MiddleEast';
 
 export const categoryValues = [
-  'Business', 'Entertainment', 'Health', 'Politics', 'Products', 'ScienceAndTechnology', 'Sports', 'US', 'World', 'World_Africa', 'World_Americas', 'World_Asia', 'World_Europe', 'World_MiddleEast'
+  'Business', 'Entertainment', 'Health', 'Politics', 'Products',
+  'ScienceAndTechnology', 'Sports', 'US', 'World', 'World_Africa', 'World_Americas', 'World_Asia', 'World_Europe', 'World_MiddleEast'
 ]
 
 export type NewsApiParams = {
@@ -89,49 +90,39 @@ const debugNewsEntries: NewsEntry[] = [{
 }];
 
 const isProduction = true;
-export async function getNews(params?: NewsApiParams): Promise<NewsEntry[]> {
+const api = "http://localhost:8080";
+export async function getNews(params?: NewsApiParams): Promise<{
+  news: NewsEntry[];
+  lastUpdated: number;
+}> {
+  let ret: {
+    news: NewsEntry[];
+    lastUpdated: number;
+  };
   if (isProduction) {
-    let url: string;
-    if (params !== undefined) {
-      const {pageSize, category, q} = params;
-      if (category !== undefined) {
-        url = `https://api.bing.microsoft.com/v7.0/news?category=${category}`
-      } else {
-        const countParam = `count=${Math.max(Math.min(pageSize ?? Infinity, 100), 1)}`;
-        const qParam = q !== undefined ? `q=${q}` : '';
-        const headerParam = [countParam, qParam].filter(x => x.length > 0).join("&")
-        url = `https://api.bing.microsoft.com/v7.0/news/search?${headerParam}`;
-      }
-    } else {
-      url = `https://api.bing.microsoft.com/v7.0/news/search?count=10`;
-    }
-    const req = new Request(url, {
+    console.log(params)
+    const response = await fetch(api + "/news", {
+      body: params !== undefined ? JSON.stringify({params}) : '{}',
       headers: {
-        'Ocp-Apim-Subscription-Key': "It's something"
-      }
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      method: "POST"
     });
-    const response = await fetch(req);
     const json = await response.json();
     if (json != null) {
-      return json.value.map((x: Record<string, any>) => {
-        return {
-          title: x.name,
-          source: {
-            id: x.provider[0].name,
-            name: x.provider[0].name
-          },
-          url: x.url,
-          publishedAt: x.datePublished,
-          urlToImage: x.image.thumbnail.contentUrl,
-          author: x.provider.map((p: any) => p.name).join(" "),
-          description: x.description,
-          content: x.description
-        };
-      });
+      ret = json;
     } else {
-      return [];
+      ret = {
+        news: [],
+        lastUpdated: -1
+      };
     }
   } else {
-    return debugNewsEntries;
+    ret = {
+      news: debugNewsEntries,
+      lastUpdated: 10000000
+    };
   }
+  return ret;
 }

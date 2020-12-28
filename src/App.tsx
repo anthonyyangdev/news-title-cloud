@@ -4,6 +4,7 @@ import {WordBubble, WordBubbleElement} from "./component/WordBubble";
 import {FilterTool} from "./component/FilterTool";
 import {Category, getNews, NewsApiParams, NewsEntry} from "./news/getNews";
 import {WordPanel} from "./component/WordPanel";
+import {LastUpdatedMessage} from "./component/LastUpdatedMessage";
 const keyword_extractor = require('keyword-extractor');
 
 
@@ -11,6 +12,7 @@ type WordCloudElementReference = Record<string, NewsEntry[]>
 type WordCloudState = {
   words: WordBubbleElement[];
   references: WordCloudElementReference;
+  lastUpdated: number;
 };
 
 function extractKeywords(phrase: string): string[] {
@@ -24,7 +26,7 @@ function extractKeywords(phrase: string): string[] {
 
 function countWordFrequency(
   entries: (NewsEntry & {keywords: string[]})[]
-): Omit<WordCloudState, 'words'> & {counter: Record<string, number>} {
+): Omit<WordCloudState, 'words' | 'lastUpdated'> & {counter: Record<string, number>} {
   const counter: Record<string, number> = {};
   const references: WordCloudElementReference = {};
   for (const entry of entries) {
@@ -55,11 +57,15 @@ function loadWordBubble(
   setCloudState: (cloudState: WordCloudState) => void,
   params?: NewsApiParams) {
   getNews(params).then(x => {
-    const keywords: (NewsEntry & {keywords: string[]})[] = x.map(entry => {
+    const keywords: (NewsEntry & {keywords: string[]})[] = x.news.map(entry => {
       return {...entry, keywords: extractKeywords(entry.title)}
     }).flat(1);
     const {counter, references} = countWordFrequency(keywords);
-    setCloudState({words: sortWordCounter(counter), references});
+    setCloudState({
+      words: sortWordCounter(counter),
+      references,
+      lastUpdated: x.lastUpdated
+    });
   }).catch(e => {
     console.log("News cannot be retrieved, Error: " + e);
   });
@@ -67,7 +73,11 @@ function loadWordBubble(
 
 function App() {
   document.title = "News Cloud";
-  const [cloudState, setCloudState] = useState<WordCloudState>({words: [], references: {}});
+  const [cloudState, setCloudState] = useState<WordCloudState>({
+    words: [],
+    references: {},
+    lastUpdated: -1,
+  });
   const [category, setCategory] = useState<Category | undefined>(undefined);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [pageSize, setPageSize] = useState<number>(20);
@@ -93,6 +103,7 @@ function App() {
     });
   }, []);
 
+  console.log(cloudState.lastUpdated)
   return (
     <div className="App">
       <header className="App-header">
@@ -105,6 +116,7 @@ function App() {
           onQueryChange={q => setQuery(q)}
         />
         <div style={{marginTop: '1rem'}}>
+          <LastUpdatedMessage lastUpdatedInit={cloudState.lastUpdated}/>
           <WordBubble
             words={cloudState.words}
             windowSize={windowSize}
