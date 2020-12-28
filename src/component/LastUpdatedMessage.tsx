@@ -10,6 +10,7 @@ export function LastUpdatedMessage({lastUpdatedInit}: {
     }, 60000);
     return () => clearInterval(interval);
   });
+  if (lastUpdatedInit < 0) return <></>;
   const minutes = Math.floor((timeElapse + lastUpdatedInit) / 60000).toFixed(0);
   return <p>Last updated: {minutes} minute{minutes === '1' ? "" : "s"} ago.</p>
 }

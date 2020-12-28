@@ -22,9 +22,11 @@ export function FilterTool({onQueryChange, onPageCountChange, onCategoryChange}:
     });
   }, []);
   return (
-    <form>
-      <label className="form-option">Query: <input type="text" name="q"
-                                                   onChange={event => onQueryChange(event.target.value)} />
+    <form onSubmit={e => e.preventDefault()}>
+      <label className="form-option">
+        Query: <input type="text" name="q" onKeyPress={e => {
+          if (e.key === 'Enter') onQueryChange((e.target as any).value);
+      }}/>
       </label>
       <label className="form-option">Number of News Articles: <select name="pageCount" defaultValue={20}
           onChange={event => onPageCountChange(Number.parseInt(event.target.value))}>

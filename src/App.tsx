@@ -76,7 +76,7 @@ function App() {
   const [cloudState, setCloudState] = useState<WordCloudState>({
     words: [],
     references: {},
-    lastUpdated: 0,
+    lastUpdated: -1,
   });
   const [category, setCategory] = useState<string | undefined>(undefined);
   const [query, setQuery] = useState<string | undefined>(undefined);
