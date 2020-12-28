@@ -5,6 +5,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 ![](images/news-cloud.png)
 Example as of December 28, 1:46 AM ET
 
+## Notes
+This project depends on a corresponding server project, which can be found in [this repo](https://github.com/anthonyyangdev/news-title-cloud-server).
+
 ## Available Scripts
 
 In the project directory, you can run:
