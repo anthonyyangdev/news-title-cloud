@@ -1,6 +1,6 @@
 # News Title Cloud
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). This simple webpage displays the common keywords used in top news articles in the U.S. as a word cloud, along with options to filter/query.
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). This simple webpage displays the common keywords used in top news articles in the U.S. as a word cloud, along with options to filter/query. Each keyword can be clicked to open a list of news articles that use that keyword.
 
 ![](images/news-cloud.png)
 Example as of December 28, 1:46 AM ET
