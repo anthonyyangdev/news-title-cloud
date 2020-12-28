@@ -1,6 +1,6 @@
-import React from "react";
-import {Category, categoryValues} from "../news/getNews";
+import React, {useEffect, useState} from "react";
 import './FilterTool.css';
+import {getCategories} from "../news/getCategories";
 
 function generateNumericalList(start: number, end: number) {
   const items = [];
@@ -10,19 +10,17 @@ function generateNumericalList(start: number, end: number) {
   return items;
 }
 
-function generateCategoryList() {
-  const items = [];
-  for (const category of categoryValues) {
-    items.push(<option key={category} value={category}>{category}</option>);
-  }
-  return items;
-}
-
 export function FilterTool({onQueryChange, onPageCountChange, onCategoryChange}: {
   onQueryChange: (q: string) => void;
   onPageCountChange: (count: number) => void;
-  onCategoryChange: (category: Category | 'any') => void;
+  onCategoryChange: (category: string) => void;
 }) {
+  const [categories, setCategories] = useState<{value: string; text: string}[]>([]);
+  useEffect(() => {
+    getCategories().then(response => {
+      setCategories(response);
+    });
+  }, []);
   return (
     <form>
       <label className="form-option">Query: <input type="text" name="q"
@@ -34,8 +32,10 @@ export function FilterTool({onQueryChange, onPageCountChange, onCategoryChange}:
         </select>
       </label>
       <label className="form-option">Category: <select name="category" defaultValue='any'
-                onChange={event => onCategoryChange(event.target.value as Category | 'any')}>
-          {generateCategoryList()}
+                onChange={event => onCategoryChange(event.target.value)}>
+          {categories.map(({text, value}) => {
+            return <option key={value} value={value}>{text}</option>;
+          })}
       </select></label>
     </form>
   )

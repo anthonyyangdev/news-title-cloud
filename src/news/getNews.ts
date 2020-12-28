@@ -1,14 +1,8 @@
-
-export type Category = 'Business' | 'Entertainment' | 'Health' | 'Politics' | 'Products' | 'ScienceAndTechnology' | 'Sports' | 'US' | 'World' | 'World_Africa' | 'World_Americas' | 'World_Asia' | 'World_Europe' | 'World_MiddleEast';
-
-export const categoryValues = [
-  'Business', 'Entertainment', 'Health', 'Politics', 'Products',
-  'ScienceAndTechnology', 'Sports', 'US', 'World', 'World_Africa', 'World_Americas', 'World_Asia', 'World_Europe', 'World_MiddleEast'
-]
+import {Config} from "./Config";
 
 export type NewsApiParams = {
   pageSize?: number;
-  category?: Category;
+  category?: string;
   q?: string;
 };
 
@@ -19,7 +13,7 @@ export type NewsEntry = {
     name: string;
   };
   url: string;
-  urlToImage: string;
+  urlToImage: string | undefined;
   publishedAt: string;
   author: string;
   description: string;
@@ -89,8 +83,6 @@ const debugNewsEntries: NewsEntry[] = [{
   "content": "After a historic day in which the headlines could hardly keep up with price action and Bitcoin set a new all-time high above $26,500, traders and analysts are now turning their attention towards what… [+2533 chars]"
 }];
 
-const isProduction = true;
-const api = "http://localhost:8080";
 export async function getNews(params?: NewsApiParams): Promise<{
   news: NewsEntry[];
   lastUpdated: number;
@@ -99,9 +91,9 @@ export async function getNews(params?: NewsApiParams): Promise<{
     news: NewsEntry[];
     lastUpdated: number;
   };
-  if (isProduction) {
+  if (Config.isProduction) {
     console.log(params)
-    const response = await fetch(api + "/news", {
+    const response = await fetch(Config.api + "/news", {
       body: params !== undefined ? JSON.stringify({params}) : '{}',
       headers: {
         'Accept': 'application/json',

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import './App.css';
 import {WordBubble, WordBubbleElement} from "./component/WordBubble";
 import {FilterTool} from "./component/FilterTool";
-import {Category, getNews, NewsApiParams, NewsEntry} from "./news/getNews";
+import {getNews, NewsApiParams, NewsEntry} from "./news/getNews";
 import {WordPanel} from "./component/WordPanel";
 import {LastUpdatedMessage} from "./component/LastUpdatedMessage";
 const keyword_extractor = require('keyword-extractor');
@@ -76,9 +76,9 @@ function App() {
   const [cloudState, setCloudState] = useState<WordCloudState>({
     words: [],
     references: {},
-    lastUpdated: -1,
+    lastUpdated: 0,
   });
-  const [category, setCategory] = useState<Category | undefined>(undefined);
+  const [category, setCategory] = useState<string | undefined>(undefined);
   const [query, setQuery] = useState<string | undefined>(undefined);
   const [pageSize, setPageSize] = useState<number>(20);
   const [windowSize, setWindowSize] = useState<{width: number; height: number}>({
