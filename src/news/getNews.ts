@@ -91,7 +91,12 @@ export async function getNews(params?: NewsApiParams): Promise<{
     news: NewsEntry[];
     lastUpdated: number;
   };
-  if (Config.isProduction) {
+  if (Config.isDebug) {
+    ret = {
+      news: debugNewsEntries,
+      lastUpdated: 10000000
+    };
+  } else {
     console.log(params)
     const response = await fetch(Config.api + "/news", {
       body: params !== undefined ? JSON.stringify({params}) : '{}',
@@ -110,11 +115,6 @@ export async function getNews(params?: NewsApiParams): Promise<{
         lastUpdated: -1
       };
     }
-  } else {
-    ret = {
-      news: debugNewsEntries,
-      lastUpdated: 10000000
-    };
   }
   return ret;
 }
