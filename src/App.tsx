@@ -72,7 +72,6 @@ function loadWordBubble(
 }
 
 function App() {
-  document.title = "News Cloud";
   const [cloudState, setCloudState] = useState<WordCloudState>({
     words: [],
     references: {},
@@ -103,11 +102,10 @@ function App() {
     });
   }, []);
 
-  console.log(cloudState.lastUpdated)
   return (
     <div className="App">
       <header className="App-header">
-        News Cloud
+        News Title Cloud
       </header>
       <div className="App-body">
         <FilterTool
