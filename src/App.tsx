@@ -1,19 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import './App.css';
-import {WordBubble, WordBubbleElement} from "./component/WordBubble";
+import {WordBubble} from "./component/WordBubble";
 import {FilterTool} from "./component/FilterTool";
 import {getNews, NewsApiParams, NewsEntry} from "./news/getNews";
 import {WordPanel} from "./component/WordPanel";
 import {LastUpdatedMessage} from "./component/LastUpdatedMessage";
+import {WordDataBlock} from "./component/WordDataBlock";
+import {WordBubbleElement, WordCloudElementReference, WordCloudState} from "./Types";
 const keyword_extractor = require('keyword-extractor');
-
-
-type WordCloudElementReference = Record<string, NewsEntry[]>
-type WordCloudState = {
-  words: WordBubbleElement[];
-  references: WordCloudElementReference;
-  lastUpdated: number;
-};
 
 function extractKeywords(phrase: string): string[] {
   return keyword_extractor.extract(phrase, {
@@ -132,6 +126,7 @@ function App() {
             keyword={wordPanelProperties.keyword}
             onClose={() => setWordPanelProperties({isVisible: false, keyword: "", content: []})}
           />
+          <WordDataBlock state={cloudState}/>
         </div>
       </div>
       <footer className="App-footer">

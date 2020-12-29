@@ -1,8 +1,7 @@
 import ReactWordcloud, {Callbacks, Options} from "react-wordcloud";
 import React from "react";
+import {WordBubbleElement} from "../Types";
 
-
-export type WordBubbleElement = { text: string; value: number; };
 const options: Partial<Options> = {
   rotations: 2,
   rotationAngles: [0, 0],

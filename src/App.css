@@ -25,6 +25,7 @@
   background-color: skyblue;
   min-height: 100vh;
   display: flex;
+  padding-top: 1rem;
   flex-direction: column;
   align-items: center;
   justify-content: center;

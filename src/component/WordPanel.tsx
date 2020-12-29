@@ -12,7 +12,7 @@ const wordPanelStyle: CSSProperties = {
   backgroundColor: "rgba(255,255,255,0.95)",
   color: "black",
   textAlign: "left",
-  overflow: "scroll",
+  overflowY: "scroll",
   zIndex: 2
 };
 
